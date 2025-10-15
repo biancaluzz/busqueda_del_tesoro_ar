@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🧭 Búsqueda del Tesoro AR - Sacré Coeur</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #000;
+        }
+        .arjs-loader {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background: #000;
+        }
+        .instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+        }
+        .progress {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .completion {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            color: gold;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 10000;
+            border: 3px solid gold;
+        }
+        button {
+            background: gold;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="arjs-loader">
+        <div>
+            <h2>🧭 Cargando Búsqueda del Tesoro...</h2>
+            <p>Por favor, permite el acceso a la cámara</p>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h2>🧭 Búsqueda del Tesoro</h2>
+        <p><strong>Edificio Sacré Coeur</strong></p>
+        <p>Encuentra los 3 marcadores:</p>
+        <ol>
+            <li>📜 Marcador Inicial</li>
+            <li>🗝️ Marcador de la Llave</li>
+            <li>💎 Marcador del Tesoro</li>
+        </ol>
+    </div>
+
+    <div class="progress">
+        <h3>Progreso</h3>
+        <div id="progress-text">0/3 encontrados</div>
+    </div>
+
+    <div class="completion" id="completion">
+        <h1>🎉 ¡Tesoro Encontrado! 🎉</h1>
+        <p>¡Felicidades! Has completado la búsqueda del tesoro del Sacré Coeur</p>
+        <button onclick="resetGame()">Jugar de Nuevo</button>
+    </div>
+
+    <a-scene 
+        vr-mode-ui="enabled: false"
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+        embedded
+        renderer="logarithmicDepthBuffer: true;">
+
+        <!-- Marcador 1 - Inicio -->
+        <a-marker 
+            id="marker1" 
+            type="pattern" 
+            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/aframe/examples/marker-training/examples/pattern-files/pattern-kanji.patt"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-box position="0 0.5 0" color="#4CC3D9" scale="0.5 0.5 0.5"
+                   animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+            </a-box>
+            <a-text value="¡Bienvenido Explorador!" position="0 1.2 0" align="center" color="white" scale="2 2 2"></a-text>
+        </a-marker>
+
+        <!-- Marcador 2 - Llave -->
+        <a-marker 
+            id="marker2" 
+            type="pattern" 
+            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/aframe/examples/marker-training/examples/pattern-files/pattern-hiro.patt"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-cylinder position="0 0.5 0" color="#FFD700" radius="0.3" height="0.1"
+                        animation="property: rotation; to: 360 0 0; loop: true; dur: 2000">
+            </a-cylinder>
+            <a-text value="¡Llave Encontrada!" position="0 1.2 0" align="center" color="#FFD700" scale="2 2 2"></a-text>
+        </a-marker>
+
+        <!-- Marcador 3 - Tesoro -->
+        <a-marker 
+            id="marker3" 
+            type="pattern" 
+            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/aframe/examples/marker-training/examples/pattern-files/pattern-kanji2.patt"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-box position="0 0.5 0" color="#FF6B6B" scale="0.6 0.6 0.6"
+                   animation="property: rotation; to: 45 45 45; loop: true; dur: 1500">
+            </a-box>
+            <a-text value="¡TESORO!" position="0 1.3 0" align="center" color="#FF6B6B" scale="2 2 2"></a-text>
+            <a-light type="point" intensity="2" color="gold" position="1 1 1"></a-light>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        // Ocultar loader cuando la escena cargue
+        document.querySelector('a-scene').addEventListener('loaded', function() {
+            document.querySelector('.arjs-loader').style.display = 'none';
+        });
+
+        let foundMarkers = new Set();
+        const totalMarkers = 3;
+        
+        // Detectar marcadores encontrados
+        document.addEventListener('DOMContentLoaded', function() {
+            const markers = document.querySelectorAll('a-marker');
+            
+            markers.forEach(marker => {
+                marker.addEventListener('markerFound', function() {
+                    const markerId = this.id;
+                    
+                    if (!foundMarkers.has(markerId)) {
+                        foundMarkers.add(markerId);
+                        updateProgress();
+                        
+                        // Efecto visual
+                        this.setAttribute('animation', {
+                            property: 'scale',
+                            from: '1 1 1',
+                            to: '1.2 1.2 1.2',
+                            dur: 500,
+                            easing: 'easeOutElastic'
+                        });
+                        
+                        setTimeout(() => {
+                            this.removeAttribute('animation');
+                        }, 500);
+                        
+                        // Verificar si ganó
+                        if (foundMarkers.size === totalMarkers) {
+                            setTimeout(showCompletion, 1000);
+                        }
+                    }
+                });
+            });
+        });
+
+        function updateProgress() {
+            const progressText = document.getElementById('progress-text');
+            progressText.textContent = `${foundMarkers.size}/${totalMarkers} encontrados`;
+            
+            // Cambiar color según progreso
+            if (foundMarkers.size === totalMarkers) {
+                progressText.style.color = 'gold';
+            } else if (foundMarkers.size > 0) {
+                progressText.style.color = '#4CAF50';
+            }
+        }
+
+        function showCompletion() {
+            const completion = document.getElementById('completion');
+            completion.style.display = 'block';
+            
+            // Efectos de confeti simple
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const completion = document.getElementById('completion');
+            
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = '50%';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '9999';
+                confetti.style.animation = `fall ${Math.random() * 2 + 1}s linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                // Crear animación CSS
+                if (!document.querySelector('#confetti-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'confetti-style';
+                    style.textContent = `
+                        @keyframes fall {
+                            to {
+                                transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+                                opacity: 0;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function resetGame() {
+            foundMarkers.clear();
+            updateProgress();
+            document.getElementById('completion').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
