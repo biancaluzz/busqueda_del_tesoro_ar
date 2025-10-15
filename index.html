@@ -1,236 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>🧭 Búsqueda del Tesoro AR - Sacré Coeur</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-            background: #000;
-        }
-        .arjs-loader {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            background: #000;
-        }
-        .instructions {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
-        }
-        .progress {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .completion {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.95);
-            color: gold;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            z-index: 10000;
-            border: 3px solid gold;
-        }
-        button {
-            background: gold;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🧭 Búsqueda del Tesoro AR - Sacré Coeur</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <style>
+    body { margin:0; padding:0; overflow:hidden; font-family:Arial, sans-serif; background:#000; }
+    .arjs-loader { height:100vh; display:flex; justify-content:center; align-items:center; color:#fff; background:#000; }
+    .instructions, .progress {
+      position:absolute; top:10px; z-index:1000; background:rgba(0,0,0,.8); color:#fff; padding:15px; border-radius:10px;
+    }
+    .instructions { left:10px; max-width:300px; }
+    .progress { right:10px; }
+    .completion {
+      display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      background:rgba(0,0,0,.95); color:gold; padding:30px; border-radius:15px; text-align:center; z-index:10000; border:3px solid gold;
+    }
+    button { background:gold; color:#000; border:none; padding:10px 20px; border-radius:5px; font-size:16px; cursor:pointer; margin-top:15px; }
+  </style>
 </head>
 <body>
-    <div class="arjs-loader">
-        <div>
-            <h2>🧭 Cargando Búsqueda del Tesoro...</h2>
-            <p>Por favor, permite el acceso a la cámara</p>
-        </div>
+  <div class="arjs-loader">
+    <div>
+      <h2>🧭 Cargando Búsqueda del Tesoro...</h2>
+      <p>Por favor, permite el acceso a la cámara</p>
     </div>
+  </div>
 
-    <div class="instructions">
-        <h2>🧭 Búsqueda del Tesoro</h2>
-        <p><strong>Edificio Sacré Coeur</strong></p>
-        <p>Encuentra los 3 marcadores:</p>
-        <ol>
-            <li>📜 Marcador Inicial</li>
-            <li>🗝️ Marcador de la Llave</li>
-            <li>💎 Marcador del Tesoro</li>
-        </ol>
-    </div>
+  <div class="instructions">
+    <h2>🧭 Búsqueda del Tesoro</h2>
+    <p><strong>Edificio Sacré Coeur</strong></p>
+    <p>Encuentra los 3 marcadores:</p>
+    <ol>
+      <li>📜 Marcador Inicial</li>
+      <li>🗝 Marcador de la Llave</li>
+      <li>💎 Marcador del Tesoro</li>
+    </ol>
+  </div>
 
-    <div class="progress">
-        <h3>Progreso</h3>
-        <div id="progress-text">0/3 encontrados</div>
-    </div>
+  <div class="progress">
+    <h3>Progreso</h3>
+    <div id="progress-text">0/3 encontrados</div>
+  </div>
 
-    <div class="completion" id="completion">
-        <h1>🎉 ¡Tesoro Encontrado! 🎉</h1>
-        <p>¡Felicidades! Has completado la búsqueda del tesoro del Sacré Coeur</p>
-        <button onclick="resetGame()">Jugar de Nuevo</button>
-    </div>
+  <div class="completion" id="completion">
+    <h1>🎉 ¡Tesoro Encontrado! 🎉</h1>
+    <p>¡Felicidades! Has completado la búsqueda del tesoro del Sacré Coeur</p>
+    <button onclick="resetGame()">Jugar de Nuevo</button>
+  </div>
 
-    <a-scene 
-        vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-        embedded
-        renderer="logarithmicDepthBuffer: true;">
+  <a-scene
+    vr-mode-ui="enabled: false"
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    embedded
+    renderer="logarithmicDepthBuffer: true">
 
-        <!-- Marcador 1 - Inicio -->
-        <a-marker
-          id="marker-hola"
-          preset="hiro"
-          emitevents="true"
-          smooth="true"
-          smoothCount="10"
-          smoothTolerance="0.01">
-        
-          <a-text
-            value="hola"
-            align="center"
-            color="#FFFFFF"
-            position="0 0.8 0"
-            scale="2 2 2">
-          </a-text>
-        </a-marker>
+    <!-- Marcador HIRO con texto que siempre mira a la cámara -->
+    <a-marker
+      id="marker-hola"
+      preset="hiro"
+      emitevents="true"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01">
 
-        <a-entity camera></a-entity>
-    </a-scene>
+      <!-- Fondo para legibilidad -->
+      <a-plane position="0 0.9 0" width="1.8" height="0.6"
+               color="#000" opacity="0.6" side="double" face-camera></a-plane>
 
-    <script>
-        // Ocultar loader cuando la escena cargue
-        document.querySelector('a-scene').addEventListener('loaded', function() {
-            document.querySelector('.arjs-loader').style.display = 'none';
-        });
+      <!-- Texto siempre orientado a la cámara -->
+      <a-text value="hola"
+              align="center" color="#FFFFFF" width="2.4"
+              position="0 0.9 0.01" side="double" face-camera></a-text>
+    </a-marker>
 
-        let foundMarkers = new Set();
-        const totalMarkers = 3;
-        
-        // Detectar marcadores encontrados
-        document.addEventListener('DOMContentLoaded', function() {
-            const markers = document.querySelectorAll('a-marker');
-            
-            markers.forEach(marker => {
-                marker.addEventListener('markerFound', function() {
-                    const markerId = this.id;
-                    
-                    if (!foundMarkers.has(markerId)) {
-                        foundMarkers.add(markerId);
-                        updateProgress();
-                        
-                        // Efecto visual
-                        this.setAttribute('animation', {
-                            property: 'scale',
-                            from: '1 1 1',
-                            to: '1.2 1.2 1.2',
-                            dur: 500,
-                            easing: 'easeOutElastic'
-                        });
-                        
-                        setTimeout(() => {
-                            this.removeAttribute('animation');
-                        }, 500);
-                        
-                        // Verificar si ganó
-                        if (foundMarkers.size === totalMarkers) {
-                            setTimeout(showCompletion, 1000);
-                        }
-                    }
-                });
-            });
-        });
+    <!-- Cámara con id para el billboard -->
+    <a-entity id="cam" camera></a-entity>
+  </a-scene>
 
-        function updateProgress() {
-            const progressText = document.getElementById('progress-text');
-            progressText.textContent = `${foundMarkers.size}/${totalMarkers} encontrados`;
-            
-            // Cambiar color según progreso
-            if (foundMarkers.size === totalMarkers) {
-                progressText.style.color = 'gold';
-            } else if (foundMarkers.size > 0) {
-                progressText.style.color = '#4CAF50';
-            }
-        }
+  <!-- Componente: orienta el objeto hacia la cámara -->
+  <script>
+    AFRAME.registerComponent('face-camera', {
+      init(){ this.cam = document.querySelector('#cam'); this.tmp = new THREE.Vector3(); },
+      tick(){
+        if(!this.cam) return;
+        this.el.object3D.lookAt(this.cam.object3D.getWorldPosition(this.tmp));
+      }
+    });
+  </script>
 
-        function showCompletion() {
-            const completion = document.getElementById('completion');
-            completion.style.display = 'block';
-            
-            // Efectos de confeti simple
-            createConfetti();
-        }
+  <script>
+    // Ocultar loader cuando la escena cargue
+    document.querySelector('a-scene').addEventListener('loaded', function() {
+      document.querySelector('.arjs-loader').style.display = 'none';
+    });
 
-        function createConfetti() {
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            const completion = document.getElementById('completion');
-            
-            for (let i = 0; i < 20; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = '50%';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.zIndex = '9999';
-                confetti.style.animation = `fall ${Math.random() * 2 + 1}s linear forwards`;
-                
-                document.body.appendChild(confetti);
-                
-                // Crear animación CSS
-                if (!document.querySelector('#confetti-style')) {
-                    const style = document.createElement('style');
-                    style.id = 'confetti-style';
-                    style.textContent = `
-                        @keyframes fall {
-                            to {
-                                transform: translateY(100vh) rotate(${Math.random() * 360}deg);
-                                opacity: 0;
-                            }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-                
-                setTimeout(() => confetti.remove(), 3000);
-            }
-        }
+    let foundMarkers = new Set();
+    const totalMarkers = 1; // ahora solo usamos HIRO en este archivo
 
-        function resetGame() {
-            foundMarkers.clear();
+    document.addEventListener('DOMContentLoaded', function() {
+      const markers = document.querySelectorAll('a-marker');
+      markers.forEach(marker => {
+        marker.addEventListener('markerFound', function() {
+          const markerId = this.id;
+          if (!foundMarkers.has(markerId)) {
+            foundMarkers.add(markerId);
             updateProgress();
-            document.getElementById('completion').style.display = 'none';
+            // efecto visual simple
+            this.setAttribute('animation', {
+              property: 'scale', from: '1 1 1', to: '1.2 1.2 1.2', dur: 500, easing: 'easeOutElastic'
+            });
+            setTimeout(() => this.removeAttribute('animation'), 500);
+            if (foundMarkers.size === totalMarkers) setTimeout(showCompletion, 800);
+          }
+        });
+      });
+    });
+
+    function updateProgress() {
+      const progressText = document.getElementById('progress-text');
+      progressText.textContent = ${foundMarkers.size}/${totalMarkers} encontrados;
+      if (foundMarkers.size === totalMarkers) {
+        progressText.style.color = 'gold';
+      } else if (foundMarkers.size > 0) {
+        progressText.style.color = '#4CAF50';
+      }
+    }
+
+    function showCompletion() {
+      const completion = document.getElementById('completion');
+      completion.style.display = 'block';
+      createConfetti();
+    }
+
+    function createConfetti() {
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+      const completion = document.getElementById('completion');
+
+      for (let i = 0; i < 20; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = '50%';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.zIndex = '9999';
+        confetti.style.animation = fall ${Math.random() * 2 + 1}s linear forwards;
+        document.body.appendChild(confetti);
+
+        if (!document.querySelector('#confetti-style')) {
+          const style = document.createElement('style');
+          style.id = 'confetti-style';
+          style.textContent = `
+            @keyframes fall {
+              to {
+                transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+                opacity: 0;
+              }
+            }
+          `;
+          document.head.appendChild(style);
         }
-    </script>
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    function resetGame() {
+      foundMarkers.clear();
+      updateProgress();
+      document.getElementById('completion').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
