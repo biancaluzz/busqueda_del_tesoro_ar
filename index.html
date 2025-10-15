@@ -1,284 +1,236 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Mi Proyecto AR - Búsqueda del Tesoro</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Búsqueda del Tesoro AR</title>
 
-    <!-- A-Frame & AR.js -->
-    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.6.0/dist/aframe-master.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+  <!-- A-Frame & AR.js -->
+  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.6.0/dist/aframe-master.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <style>
-        html, body { height:100%; margin:0; background:#000; }
-        .arjs-loader {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            flex-direction: column;
-        }
-        .hud {
-            position: absolute;
-            left: 12px;
-            top: 12px;
-            z-index: 9998;
-            font-family: Arial, sans-serif;
-            color: #fff;
-            background: rgba(0,0,0,0.4);
-            padding: 10px 12px;
-            border-radius: 8px;
-            max-width: 320px;
-        }
-        .hud h3 { margin:0 0 6px 0; font-size: 1rem; }
-        .hud p { margin:0; font-size: 0.9rem; opacity:0.95; }
-        .progress {
-            margin-top:8px;
-        }
-        .btn-reset {
-            margin-top:8px;
-            display:inline-block;
-            background:#0b84ff;
-            color:white;
-            padding:6px 8px;
-            border-radius:6px;
-            cursor:pointer;
-            font-size:0.85rem;
-        }
-        .treasure-overlay {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
-            z-index: 10000;
-            background: rgba(255,255,255,0.95);
-            color: #111;
-            padding: 18px 22px;
-            border-radius: 12px;
-            text-align:center;
-            display:none;
-            font-family: Arial, sans-serif;
-        }
-        .small-note { font-size:0.85rem; opacity:0.8; margin-top:6px; }
-    </style>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Pantalla de carga */
+    .arjs-loader {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    /* Panel de información */
+    .hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 10px;
+      max-width: 320px;
+    }
+
+    .hud h3 {
+      margin: 0 0 6px 0;
+      font-size: 1rem;
+    }
+
+    .hud p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .btn-reset {
+      background: #007bff;
+      padding: 6px 10px;
+      color: white;
+      border-radius: 6px;
+      margin-top: 8px;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .treasure-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #111;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+      z-index: 10001;
+      width: 80%;
+      max-width: 360px;
+    }
+
+    .treasure-overlay button {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    a-scene {
+      position: relative !important;
+      z-index: 1;
+    }
+  </style>
 </head>
-<body style="margin:0; overflow:hidden;">
 
-    <!-- Loader -->
-    <div class="arjs-loader" id="loader">
-        <div>
-            <div style="font-size:1.2rem; margin-bottom:8px">Cargando juego AR...</div>
-            <div style="font-size:0.95rem; opacity:0.9">Asegúrate de permitir el uso de la cámara</div>
-        </div>
+<body>
+
+  <!-- Pantalla de carga -->
+  <div class="arjs-loader" id="loader">
+    Cargando juego AR... <br> Permite el uso de la cámara.
+  </div>
+
+  <!-- Panel de información -->
+  <div class="hud" id="hud">
+    <h3>🔎 Búsqueda del Tesoro AR</h3>
+    <p>Escanea los 3 marcadores para descubrir las pistas y encontrar el tesoro.</p>
+    <p><b>Progreso:</b> <span id="foundCount">0</span> / 3</p>
+    <div id="clueList">
+      <p>• Marcador A: ❌</p>
+      <p>• Marcador B: ❌</p>
+      <p>• Marcador C: ❌</p>
     </div>
+    <div class="btn-reset" id="resetBtn">Reiniciar búsqueda</div>
+  </div>
 
-    <!-- Heads-up UI -->
-    <div class="hud" id="hud">
-        <h3>Búsqueda del Tesoro — Edif. Sacré Coeur</h3>
-        <p id="story">Escanea los marcadores por el edificio para recolectar 3 pistas y encontrar el tesoro.</p>
-        <div class="progress">
-            Progreso: <span id="foundCount">0</span>/3
-        </div>
-        <div id="clueList" style="margin-top:8px; font-size:0.9rem;">
-            <div>• Marcador A: ✳ (no encontrado)</div>
-            <div>• Marcador B: ✳ (no encontrado)</div>
-            <div>• Marcador C: ✳ (no encontrado)</div>
-        </div>
+  <!-- Tesoro final -->
+  <div class="treasure-overlay" id="treasureOverlay">
+    <h2>🎉 ¡Tesoro encontrado! 🎉</h2>
+    <p>Has encontrado todas las pistas. ¡Excelente trabajo!</p>
+    <button id="closeTreasure">Cerrar</button>
+  </div>
 
-        <div style="margin-top:8px;">
-            Beta testers: Bruno, Maxi, Gonzalo
-        </div>
+  <!-- Escena de A-Frame -->
+  <a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+  >
 
-        <div class="btn-reset" id="resetBtn">Reiniciar búsqueda</div>
-        <div class="small-note">Consejo: usar en celular y mover la cámara con calma hasta que el marcador aparezca.</div>
-    </div>
+    <!-- MARCADOR 1 (HIRO) -->
+    <a-marker preset="hiro" id="marker-hiro">
+      <a-box position="0 0.5 0" color="tomato"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 4000">
+      </a-box>
+      <a-text value="Pista 1: Busca la escalera este" position="0 1.2 0" align="center" width="3"></a-text>
+    </a-marker>
 
-    <!-- Treasure final overlay -->
-    <div class="treasure-overlay" id="treasureOverlay">
-        <h2>🎉 ¡Tesoro encontrado! 🎉</h2>
-        <p>¡Felicidades! Has recolectado todas las pistas.</p>
-        <p style="margin-top:10px; font-weight:600;">Muestra esto a los evaluadores: Bruno / Maxi / Gonzalo</p>
-        <div style="margin-top:12px;">
-            <button id="closeTreasure">Cerrar</button>
-        </div>
-    </div>
+    <!-- MARCADOR 2 (KANJI) -->
+    <a-marker preset="kanji" id="marker-kanji">
+      <a-sphere position="0 0.5 0" color="gold"
+        animation="property: scale; to: 1.3 1.3 1.3; dir: alternate; loop: true; dur: 1000">
+      </a-sphere>
+      <a-text value="Pista 2: Frente a la sala de lectura" position="0 1.2 0" align="center" width="3"></a-text>
+    </a-marker>
 
-    <!-- Scene -->
-    <a-scene
-        vr-mode-ui="enabled: false"
-        embedded
-        renderer="logarithmicDepthBuffer: true; precision: medium;"
-        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-    >
+    <!-- MARCADOR 3 (BARCODE 5) -->
+    <a-marker type="barcode" value="5" id="marker-barcode">
+      <a-cylinder position="0 0.5 0" color="seagreen"
+        animation="property: position; to: 0 0.8 0; dir: alternate; loop: true; dur: 800">
+      </a-cylinder>
+      <a-text value="Pista 3: Revisa el mural central" position="0 1.2 0" align="center" width="3"></a-text>
+    </a-marker>
 
-        <!-- MARKER 1: Hiro preset -->
-        <a-marker preset="hiro" id="marker-hiro">
-            <!-- Pista visual: caja giratoria y texto -->
-            <a-box position="0 0.5 0" depth="0.6" height="0.6" width="0.6" rotation="0 45 0" animation="property: rotation; to: 0 405 0; loop: true; dur: 7000"></a-box>
+    <a-entity camera></a-entity>
 
-            <a-entity position="0 1.2 0" rotation="-30 0 0">
-                <a-text value="Pista 1: Busca la escalera este" align="center" width="2.2" wrap-count="30"></a-text>
-            </a-entity>
-        </a-marker>
+    <!-- Sonidos -->
+    <a-entity id="audioHost">
+      <a-sound id="foundSound" src="https://cdn.jsdelivr.net/gh/ai-tux/sounds@master/ding.mp3" autoplay="false" positional="false"></a-sound>
+      <a-sound id="treasureSound" src="https://cdn.jsdelivr.net/gh/ai-tux/sounds@master/fanfare.mp3" autoplay="false" positional="false"></a-sound>
+    </a-entity>
 
-        <!-- MARKER 2: Kanji preset -->
-        <a-marker preset="kanji" id="marker-kanji">
-            <!-- Pista visual: plano con icono y texto -->
-            <a-plane position="0 0.6 0" width="1.2" height="0.7" rotation="-90 0 0" material="opacity:0.95">
-                <a-text value="Pista 2: Frente a la sala de lectura" align="center" width="1.8" position="0 0.05 0.01"></a-text>
-            </a-plane>
+  </a-scene>
 
-            <a-sphere position="0 0.2 0" radius="0.18" segments-height="18" segments-width="18" animation="property: position; dir: alternate; dur: 1200; to: 0 0.45 0; loop: true"></a-sphere>
-        </a-marker>
+  <script>
+    // --- Variables principales ---
+    const loader = document.getElementById("loader");
+    const hudCount = document.getElementById("foundCount");
+    const clueList = document.getElementById("clueList");
+    const overlay = document.getElementById("treasureOverlay");
+    const resetBtn = document.getElementById("resetBtn");
+    const closeBtn = document.getElementById("closeTreasure");
 
-        <!-- MARKER 3: Barcode (valor 5) -->
-        <a-marker type="barcode" value="5" id="marker-barcode">
-            <!-- Pista visual: texto y ancla -->
-            <a-entity position="0 0.8 0">
-                <a-text value="Pista 3: Revisa el mural central" align="center" width="2.4"></a-text>
-            </a-entity>
+    const markers = {
+      "marker-hiro": { name: "Marcador A", found: false },
+      "marker-kanji": { name: "Marcador B", found: false },
+      "marker-barcode": { name: "Marcador C", found: false },
+    };
 
-            <a-cylinder position="0 0.35 0" height="0.4" radius="0.12" animation="property: scale; dir: alternate; dur: 900; to: 1.2 1.2 1.2; loop: true"></a-cylinder>
-        </a-marker>
+    // --- Ocultar loader cuando la escena carga ---
+    window.addEventListener("load", () => {
+      loader.style.display = "none";
+    });
 
-        <!-- Camera -->
-        <a-entity camera></a-entity>
+    // --- Función para actualizar progreso en pantalla ---
+    function updateHUD() {
+      const found = Object.values(markers).filter(m => m.found).length;
+      hudCount.textContent = found;
+      let html = "";
+      for (const key in markers) {
+        html += `<p>• ${markers[key].name}: ${markers[key].found ? "✅" : "❌"}</p>`;
+      }
+      clueList.innerHTML = html;
+      if (found === 3) {
+        document.getElementById("treasureSound").components.sound.playSound();
+        overlay.style.display = "block";
+      }
+    }
 
-        <!-- Invisible entity to host sound nodes -->
-        <a-entity id="audioHost">
-            <a-sound id="foundSound" src="https://cdn.jsdelivr.net/gh/ai-tux/sounds@master/ding.mp3" autoplay="false" positional="false" volume="0.8"></a-sound>
-            <a-sound id="treasureSound" src="https://cdn.jsdelivr.net/gh/ai-tux/sounds@master/fanfare.mp3" autoplay="false" positional="false" volume="1.0"></a-sound>
-        </a-entity>
-    </a-scene>
+    // --- Escucha de marcadores ---
+    function setupMarkers() {
+      for (const id in markers) {
+        const el = document.getElementById(id);
+        el.addEventListener("markerFound", () => {
+          if (!markers[id].found) {
+            markers[id].found = true;
+            document.getElementById("foundSound").components.sound.playSound();
+            updateHUD();
+          }
+        });
+      }
+    }
 
-    <!-- Game JS -->
-    <script>
-        (function(){
-            const loader = document.getElementById('loader');
-            const hudFoundCount = document.getElementById('foundCount');
-            const clueList = document.getElementById('clueList');
-            const resetBtn = document.getElementById('resetBtn');
-            const treasureOverlay = document.getElementById('treasureOverlay');
-            const closeTreasure = document.getElementById('closeTreasure');
+    setupMarkers();
 
-            // Track markers state
-            const markers = {
-                'marker-hiro': { name: 'Marcador A', found: false, hint: 'Pista 1: Busca la escalera este' },
-                'marker-kanji': { name: 'Marcador B', found: false, hint: 'Pista 2: Frente a la sala de lectura' },
-                'marker-barcode': { name: 'Marcador C', found: false, hint: 'Pista 3: Revisa el mural central' }
-            };
-
-            // Restore from localStorage (optional)
-            const STORAGE_KEY = 'ar_treasure_found';
-            const persisted = localStorage.getItem(STORAGE_KEY);
-            if (persisted) {
-                try {
-                    const obj = JSON.parse(persisted);
-                    for (const id in obj) if (markers[id]) markers[id].found = !!obj[id];
-                } catch(e){ console.warn('No se pudo parsear estado persistido'); }
-            }
-
-            // Update HUD
-            function updateHUD(){
-                const foundIds = Object.keys(markers).filter(id => markers[id].found);
-                hudFoundCount.textContent = foundIds.length;
-                // Update clue list
-                const lines = [];
-                let i=0;
-                for (const id in markers){
-                    i++;
-                    const m = markers[id];
-                    const status = m.found ? '✅ encontrado' : '✳ (no encontrado)';
-                    lines.push(`<div>• ${m.name}: ${status}</div>`);
-                }
-                clueList.innerHTML = lines.join('');
-                // Persist
-                const persistObj = {};
-                for (const id in markers) persistObj[id] = markers[id].found;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(persistObj));
-                // If all found -> show treasure
-                if (foundIds.length === Object.keys(markers).length) revealTreasure();
-            }
-
-            function revealTreasure(){
-                document.getElementById('treasureSound').components.sound.playSound();
-                treasureOverlay.style.display = 'block';
-            }
-
-            function hideLoader(){
-                if (loader) loader.style.display = 'none';
-            }
-
-            // Set up marker event listeners
-            function attachMarkerListeners(){
-                for (const id in markers){
-                    const el = document.getElementById(id);
-                    if (!el) continue;
-
-                    // When marker is found
-                    el.addEventListener('markerFound', () => {
-                        if (!markers[id].found){
-                            markers[id].found = true;
-                            document.getElementById('foundSound').components.sound.playSound();
-                        }
-                        updateHUD();
-                    });
-
-                    // Optional: when lost do nothing or show subtle feedback
-                    el.addEventListener('markerLost', () => {
-                        // Could notify user: 'Marcador X fuera de vista'
-                    });
-                }
-            }
-
-            // Reset function
-            resetBtn.addEventListener('click', () => {
-                for (const id in markers) markers[id].found = false;
-                localStorage.removeItem(STORAGE_KEY);
-                updateHUD();
-                treasureOverlay.style.display = 'none';
-            });
-
-            closeTreasure.addEventListener('click', () => {
-                treasureOverlay.style.display = 'none';
-            });
-
-            // Wait until scene loaded
-            window.addEventListener('DOMContentLoaded', () => {
-                const scene = document.querySelector('a-scene');
-                if (scene && scene.hasLoaded) {
-                    hideLoader();
-                    attachMarkerListeners();
-                    updateHUD();
-                } else if (scene) {
-                    scene.addEventListener('loaded', () => {
-                        hideLoader();
-                        attachMarkerListeners();
-                        updateHUD();
-                    });
-                } else {
-                    // fallback
-                    setTimeout(() => { hideLoader(); attachMarkerListeners(); updateHUD(); }, 1200);
-                }
-            });
-
-            // Accessibility / quick debug: press "R" to reset
-            window.addEventListener('keydown', (ev) => {
-                if (ev.key.toLowerCase() === 'r') {
-                    resetBtn.click();
-                }
-            });
-        })();
-    </script>
-
+    // --- Botones ---
+    resetBtn.onclick = () => {
+      for (const id in markers) markers[id].found = false;
+      overlay.style.display = "none";
+      updateHUD();
+    };
+    closeBtn.onclick = () => overlay.style.display = "none";
+  </script>
 </body>
 </html>
+
 
