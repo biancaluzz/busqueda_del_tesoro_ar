@@ -106,53 +106,21 @@
         renderer="logarithmicDepthBuffer: true;">
 
         <!-- Marcador 1 - Inicio -->
-        <a-marker 
-            id="marker1" 
-            type="pattern" 
-            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/HIRO.jpg"
-            emitevents="true"
-            smooth="true"
-            smoothCount="10"
-            smoothTolerance="0.01">
-            
-            <a-box position="0 0.5 0" color="#4CC3D9" scale="0.5 0.5 0.5"
-                   animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
-            </a-box>
-            <a-text value="¡Bienvenido Explorador!" position="0 1.2 0" align="center" color="white" scale="2 2 2"></a-text>
-        </a-marker>
-
-
-        <!-- Marcador 2 - Llave -->
-        <a-marker 
-            id="marker2" 
-            type="pattern" 
-            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/aframe/examples/marker-training/examples/pattern-files/pattern-hiro.patt"
-            emitevents="true"
-            smooth="true"
-            smoothCount="10"
-            smoothTolerance="0.01">
-            
-            <a-cylinder position="0 0.5 0" color="#FFD700" radius="0.3" height="0.1"
-                        animation="property: rotation; to: 360 0 0; loop: true; dur: 2000">
-            </a-cylinder>
-            <a-text value="¡Llave Encontrada!" position="0 1.2 0" align="center" color="#FFD700" scale="2 2 2"></a-text>
-        </a-marker>
-
-        <!-- Marcador 3 - Tesoro -->
-        <a-marker 
-            id="marker3" 
-            type="pattern" 
-            url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/aframe/examples/marker-training/examples/pattern-files/pattern-kanji2.patt"
-            emitevents="true"
-            smooth="true"
-            smoothCount="10"
-            smoothTolerance="0.01">
-            
-            <a-box position="0 0.5 0" color="#FF6B6B" scale="0.6 0.6 0.6"
-                   animation="property: rotation; to: 45 45 45; loop: true; dur: 1500">
-            </a-box>
-            <a-text value="¡TESORO!" position="0 1.3 0" align="center" color="#FF6B6B" scale="2 2 2"></a-text>
-            <a-light type="point" intensity="2" color="gold" position="1 1 1"></a-light>
+        <a-marker
+          id="marker-hola"
+          preset="hiro"
+          emitevents="true"
+          smooth="true"
+          smoothCount="10"
+          smoothTolerance="0.01">
+        
+          <a-text
+            value="hola"
+            align="center"
+            color="#FFFFFF"
+            position="0 0.8 0"
+            scale="2 2 2">
+          </a-text>
         </a-marker>
 
         <a-entity camera></a-entity>
