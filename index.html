@@ -79,9 +79,9 @@
         embedded
         renderer="logarithmicDepthBuffer: true;">
 
-        <!-- 📜 MARCADOR 1 - ENTRADA PRINCIPAL -->
+        <!-- MARCADOR 1 -->
         <a-marker id="marker1" preset="hiro">
-            <!-- Objeto 3D: Pirámide dorada -->
+            <!-- Objeto 3D: Pirámide -->
             <a-cone 
                 position="0 0.5 0" 
                 color="#FFD700" 
@@ -89,23 +89,19 @@
                 radius-bottom="0.5"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 4000">
             </a-cone>
-            
             <!-- Texto flotante -->
             <a-text 
-                value="¡Primer Marcador!" 
+                value="¡Piramide!" 
                 position="0 1.5 0" 
                 align="center" 
                 color="#4CC3D9"
                 scale="1.5 1.5 1.5">
             </a-text>
-            
-            <!-- Efecto de luz -->
-            <a-light type="point" intensity="1.5" color="#4CC3D9" position="1 2 1"></a-light>
         </a-marker>
 
-        <!-- 🗝️ MARCADOR 2 - BIBLIOTECA -->
+        <!-- MARCADOR 2 -->
         <a-marker id="marker2" preset="kanji">
-            <!-- Objeto 3D: Llave dorada -->
+            <!-- Objeto 3D: Llave -->
             <a-cylinder 
                 position="0 0.3 0" 
                 color="#FFD700" 
@@ -113,7 +109,6 @@
                 height="0.8"
                 animation="property: rotation; to: 360 0 0; loop: true; dur: 2000">
             </a-cylinder>
-            
             <!-- Anillo de la llave -->
             <a-torus 
                 position="0 0.8 0" 
@@ -122,10 +117,9 @@
                 radius="0.2" 
                 radius-tubular="0.05">
             </a-torus>
-            
             <!-- Texto flotante -->
             <a-text 
-                value="¡Llave Mágica!" 
+                value="¡Llave!" 
                 position="0 1.5 0" 
                 align="center" 
                 color="#FFD700"
@@ -142,7 +136,6 @@
                 scale="0.8 0.4 0.5"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
             </a-box>
-            
             <!-- Tapa del cofre -->
             <a-box 
                 position="0 0.6 0" 
@@ -150,7 +143,6 @@
                 scale="0.7 0.1 0.45"
                 animation="property: rotation; to: 45 0 0; loop: true; dir: alternate; dur: 2000">
             </a-box>
-            
             <!-- Tesoro interior -->
             <a-sphere 
                 position="0 0.45 0" 
@@ -158,7 +150,6 @@
                 radius="0.15"
                 animation="property: position; to: 0 0.6 0; loop: true; dir: alternate; dur: 1000">
             </a-sphere>
-            
             <!-- Texto flotante -->
             <a-text 
                 value="¡TESORO!" 
@@ -167,9 +158,6 @@
                 color="#FF6B6B"
                 scale="2 2 2">
             </a-text>
-            
-            <!-- Efectos de luz -->
-            <a-light type="point" intensity="3" color="gold" position="1 2 1"></a-light>
         </a-marker>
 
         <a-entity camera></a-entity>
