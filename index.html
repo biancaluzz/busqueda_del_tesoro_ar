@@ -87,13 +87,13 @@
 <body>
     <div class="instructions">
         <h2>🧭 Búsqueda del Tesoro</h2>
-        <p><strong>Pista inicial: Dirigete a la suma de los 3 primeros números pares.</strong></p>
-        <p>Completa el semáforo:</p>
+        <p>Completa el semaforo:</p>
         <ol>
             <li>🔴 </li>
             <li>🟡 </li>
             <li>🟢 </li>
         </ol>
+        <p><strong>Pista inicial: Dirigite al salon que resulta de la suma de los 3 primeros numeros pares.</strong></p>
     </div>
 
     <div class="progress">
@@ -108,8 +108,8 @@
     </div>
 
     <div class="completion" id="completion">
-        <h1>🎉 ¡Tesoro Encontrado! 🎉</h1>
-        <p>¡Felicidades! Has completado la búsqueda del tesoro</p>
+        <h1>🎉 ¡Felicitaciones! 🎉</h1>
+        <p>🚦 Completaste la busqueda del tesoro 🚦</p>
         <button onclick="resetGame()">Jugar de Nuevo</button>
     </div>
 
@@ -174,9 +174,9 @@
         
         // Sistema de pistas
         const pistas = {
-            marker1: "Código ... - OK.",
-            marker2: "Si volteas la fecha de la noche de brujas, encontrarás dónde está el tesoro final.",
-            marker3: "🎉"
+            marker1: "Codigo ... - OK.",
+            marker2: "Si volteas la fecha de la noche de brujas, vas a completar el semaforo.",
+            marker3: ""
         };
 
         // Detectar marcadores encontrados
@@ -221,7 +221,7 @@
             const titulo = document.getElementById('pista-titulo');
             const texto = document.getElementById('pista-texto');
             
-            titulo.textContent = markerId === 'marker3' ? '🎉 ¡Tesoro Encontrado!' : '🔍 ¡Nueva Pista!';
+            titulo.textContent = markerId === 'marker3' ? '🎉 ¡Felicitaciones!' : '🔍 ¡Nueva Pista!';
             texto.textContent = pistas[markerId];
             pista.style.display = 'block';
         }
