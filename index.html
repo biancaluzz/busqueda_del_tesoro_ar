@@ -7,157 +7,163 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: Arial, sans-serif; }
-        
-        .instructions, .progress, .pista {
-            position: absolute; z-index: 1000; 
-            background: rgba(0,0,0,0.9); color: white; 
-            padding: 20px; border-radius: 15px; max-width: 350px;
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #000;
         }
-        
-        .instructions { top: 10px; left: 10px; }
-        .progress { top: 10px; right: 10px; text-align: center; }
-        .pista { 
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; border: 2px solid gold;
+        .arjs-loader {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background: #000;
+        }
+        .instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+        }
+        .progress {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .pista {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            color: gold;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 10000;
+            border: 2px solid gold;
+            max-width: 350px;
             display: none;
         }
-        
         .completion {
-            display: none; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); background: rgba(0,0,0,0.95);
-            color: gold; padding: 40px; border-radius: 20px; text-align: center;
-            border: 3px solid gold; z-index: 10000; max-width: 400px;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            color: gold;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 10000;
+            border: 3px solid gold;
         }
-        
         button {
-            background: gold; color: black; border: none; 
-            padding: 12px 25px; border-radius: 8px; font-size: 16px; 
-            cursor: pointer; margin-top: 20px; font-weight: bold;
+            background: gold;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
         }
-        
-        h3 { color: #4CC3D9; margin-top: 0; }
-        .pista h3 { color: gold; }
     </style>
 </head>
 <body>
-    <!-- Instrucciones iniciales -->
     <div class="instructions">
-        <h3>🧭 Búsqueda del Tesoro - Sacré Coeur</h3>
-        <p><strong>Pista inicial:</strong> El primer marcador está cerca de la ENTRADA PRINCIPAL del edificio</p>
+        <h2>🧭 Búsqueda del Tesoro</h2>
+        <p><strong>Edificio Sacré Coeur</strong></p>
+        <p>Completa el semáforo:</p>
         <ol>
-            <li>📜 Marcador Inicial</li>
-            <li>🗝️ Marcador de la Llave</li>
-            <li>💎 Marcador del Tesoro</li>
+            <li>🔴 Cubo Rojo</li>
+            <li>🟡 Cono Amarillo</li>
+            <li>🟢 Esfera Verde</li>
         </ol>
     </div>
 
-    <!-- Progreso -->
     <div class="progress">
         <h3>Progreso</h3>
         <div id="progress-text">0/3 encontrados</div>
     </div>
 
-    <!-- Panel de pistas -->
     <div class="pista" id="pista">
         <h3 id="pista-titulo">¡Nueva Pista!</h3>
         <p id="pista-texto"></p>
         <button onclick="cerrarPista()">Continuar</button>
     </div>
 
-    <!-- Mensaje final -->
     <div class="completion" id="completion">
-        <h2>🎉 ¡FELICITACIONES! 🎉</h2>
-        <p>¡Has completado la búsqueda del tesoro del Sacré Coeur!</p>
-        <p>Eres un verdadero explorador AR</p>
+        <h1>🎉 ¡Tesoro Encontrado! 🎉</h1>
+        <p>¡Felicidades! Has completado la búsqueda del tesoro</p>
         <button onclick="resetGame()">Jugar de Nuevo</button>
     </div>
 
     <a-scene 
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; debugUIEnabled: false;"
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
         embedded
         renderer="logarithmicDepthBuffer: true;">
 
-        <!-- MARCADOR 1 -->
-        <a-marker id="marker1" preset="hiro">
-            <!-- Objeto 3D: Pirámide -->
-            <a-cone 
-                position="0 0.5 0" 
-                color="#FFD700" 
-                height="1" 
-                radius-bottom="0.5"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 4000">
+        <!-- Marcador 1 - Cubo Rojo -->
+        <a-marker 
+            id="marker1" 
+            preset="hiro"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-box position="0 0.5 0" color="#FF0000" scale="0.5 0.5 0.5"
+                   animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+            </a-box>
+            <a-text value="PRIMERA PISTA" position="0 1.2 0" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
+        </a-marker>
+
+        <!-- Marcador 2 - Cono Amarillo -->
+        <a-marker 
+            id="marker2" 
+            preset="kanji"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-cone position="0 0.5 0" color="#FFFF00" height="1" radius-bottom="0.4"
+                    animation="property: rotation; to: 0 360 0; loop: true; dur: 2000">
             </a-cone>
-            <!-- Texto flotante -->
-            <a-text 
-                value="¡Piramide!" 
-                position="0 1.5 0" 
-                align="center" 
-                color="#4CC3D9"
-                scale="1.5 1.5 1.5">
-            </a-text>
+            <a-text value="SEGUNDA PISTA" position="0 1.5 0" align="center" color="#FFFF00" scale="1.5 1.5 1.5"></a-text>
         </a-marker>
 
-        <!-- MARCADOR 2 -->
-        <a-marker id="marker2" preset="kanji">
-            <!-- Objeto 3D: Llave -->
-            <a-cylinder 
-                position="0 0.3 0" 
-                color="#FFD700" 
-                radius="0.1" 
-                height="0.8"
-                animation="property: rotation; to: 360 0 0; loop: true; dur: 2000">
-            </a-cylinder>
-            <!-- Anillo de la llave -->
-            <a-torus 
-                position="0 0.8 0" 
-                color="#FFD700" 
-                arc="360" 
-                radius="0.2" 
-                radius-tubular="0.05">
-            </a-torus>
-            <!-- Texto flotante -->
-            <a-text 
-                value="¡Llave!" 
-                position="0 1.5 0" 
-                align="center" 
-                color="#FFD700"
-                scale="1.5 1.5 1.5">
-            </a-text>
-        </a-marker>
-
-        <!-- 💎 MARCADOR 3 - AZOTEA -->
-        <a-marker id="marker3" type="barcode" value="5">
-            <!-- Objeto 3D: Cofre del tesoro -->
-            <a-box 
-                position="0 0.3 0" 
-                color="#964B00" 
-                scale="0.8 0.4 0.5"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
-            </a-box>
-            <!-- Tapa del cofre -->
-            <a-box 
-                position="0 0.6 0" 
-                color="#B8860B" 
-                scale="0.7 0.1 0.45"
-                animation="property: rotation; to: 45 0 0; loop: true; dir: alternate; dur: 2000">
-            </a-box>
-            <!-- Tesoro interior -->
-            <a-sphere 
-                position="0 0.45 0" 
-                color="#FFD700" 
-                radius="0.15"
-                animation="property: position; to: 0 0.6 0; loop: true; dir: alternate; dur: 1000">
+        <!-- Marcador 3 - Esfera Verde -->
+        <a-marker 
+            id="marker3" 
+            type="barcode" 
+            value="5"
+            emitevents="true"
+            smooth="true"
+            smoothCount="10"
+            smoothTolerance="0.01">
+            
+            <a-sphere position="0 0.5 0" color="#00FF00" radius="0.4"
+                   animation="property: rotation; to: 45 45 45; loop: true; dur: 1500">
             </a-sphere>
-            <!-- Texto flotante -->
-            <a-text 
-                value="¡TESORO!" 
-                position="0 1.5 0" 
-                align="center" 
-                color="#FF6B6B"
-                scale="2 2 2">
-            </a-text>
+            <a-text value="¡TESORO!" position="0 1.3 0" align="center" color="#00FF00" scale="2 2 2"></a-text>
+            <a-light type="point" intensity="2" color="gold" position="1 1 1"></a-light>
         </a-marker>
 
         <a-entity camera></a-entity>
@@ -165,55 +171,59 @@
 
     <script>
         let foundMarkers = new Set();
+        const totalMarkers = 3;
+        
+        // Sistema de pistas
         const pistas = {
-            marker1: "¡Bien! El siguiente marcador está en la BIBLIOTECA del edificio. Busca un libro especial...",
-            marker2: "¡Excelente! El tesoro final está en la AZOTEA. Sube y encuentra la recompensa...",
-            marker3: "¡FELICITACIONES! Has encontrado el tesoro del Sacré Coeur."
+            marker1: "¡Excelente! Has encontrado el primer marcador. El siguiente está en la BIBLIOTECA del edificio. Busca entre los libros...",
+            marker2: "¡Muy bien! El tesoro final está en la AZOTEA. Sube las escaleras para encontrar la recompensa final...",
+            marker3: "🎉 ¡FELICITACIONES! Has completado la búsqueda del tesoro. Eres un verdadero explorador AR."
         };
 
-        // Detectar marcadores
-        document.querySelectorAll('a-marker').forEach(marker => {
-            marker.addEventListener('markerFound', function() {
-                if (!foundMarkers.has(this.id)) {
-                    foundMarkers.add(this.id);
-                    updateProgress();
+        // Detectar marcadores encontrados
+        document.addEventListener('DOMContentLoaded', function() {
+            const markers = document.querySelectorAll('a-marker');
+            
+            markers.forEach(marker => {
+                marker.addEventListener('markerFound', function() {
+                    const markerId = this.id;
                     
-                    // Mostrar pista correspondiente
-                    mostrarPista(this.id);
-                    
-                    // Si es el último marcador, mostrar felicitación
-                    if (foundMarkers.size === 3) {
+                    if (!foundMarkers.has(markerId)) {
+                        foundMarkers.add(markerId);
+                        updateProgress();
+                        
+                        // Mostrar pista
+                        mostrarPista(markerId);
+                        
+                        // Efecto visual
+                        this.setAttribute('animation', {
+                            property: 'scale',
+                            from: '1 1 1',
+                            to: '1.2 1.2 1.2',
+                            dur: 500,
+                            easing: 'easeOutElastic'
+                        });
+                        
                         setTimeout(() => {
-                            document.getElementById('completion').style.display = 'block';
-                            crearConfetti();
-                        }, 2000);
+                            this.removeAttribute('animation');
+                        }, 500);
+                        
+                        // Verificar si ganó
+                        if (foundMarkers.size === totalMarkers) {
+                            setTimeout(showCompletion, 1000);
+                        }
                     }
-                }
+                });
             });
         });
-
-        function updateProgress() {
-            document.getElementById('progress-text').textContent = 
-                `${foundMarkers.size}/3 encontrados`;
-            
-            // Cambiar color del progreso
-            const progress = document.getElementById('progress-text');
-            if (foundMarkers.size === 3) {
-                progress.style.color = 'gold';
-                progress.style.fontWeight = 'bold';
-            } else if (foundMarkers.size > 0) {
-                progress.style.color = '#4CAF50';
-            }
-        }
 
         function mostrarPista(markerId) {
             const pista = document.getElementById('pista');
             const titulo = document.getElementById('pista-titulo');
             const texto = document.getElementById('pista-texto');
             
-            titulo.textContent = markerId === 'marker3' ? '🎉 ¡Tesoro Encontrado! 🎉' : '🔍 ¡Nueva Pista!';
+            titulo.textContent = markerId === 'marker3' ? '🎉 ¡Tesoro Encontrado!' : '🔍 ¡Nueva Pista!';
             texto.textContent = pistas[markerId];
-            
             pista.style.display = 'block';
         }
 
@@ -221,50 +231,60 @@
             document.getElementById('pista').style.display = 'none';
         }
 
-        function crearConfetti() {
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff69b4'];
+        function updateProgress() {
+            const progressText = document.getElementById('progress-text');
+            progressText.textContent = `${foundMarkers.size}/${totalMarkers} encontrados`;
             
-            for (let i = 0; i < 150; i++) {
+            // Cambiar color según progreso
+            if (foundMarkers.size === totalMarkers) {
+                progressText.style.color = 'gold';
+            } else if (foundMarkers.size > 0) {
+                progressText.style.color = '#4CAF50';
+            }
+        }
+
+        function showCompletion() {
+            const completion = document.getElementById('completion');
+            completion.style.display = 'block';
+            
+            // Efectos de confeti simple
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const completion = document.getElementById('completion');
+            
+            for (let i = 0; i < 20; i++) {
                 const confetti = document.createElement('div');
                 confetti.style.position = 'fixed';
-                confetti.style.width = Math.random() * 15 + 5 + 'px';
-                confetti.style.height = Math.random() * 15 + 5 + 'px';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
                 confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
+                confetti.style.borderRadius = '50%';
                 confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-20px';
+                confetti.style.top = '-10px';
                 confetti.style.zIndex = '9999';
-                confetti.style.opacity = '0.8';
+                confetti.style.animation = `fall ${Math.random() * 2 + 1}s linear forwards`;
                 
-                // Animación única para cada confeti
-                const animationDuration = Math.random() * 3 + 2;
-                const animationName = 'fall' + i;
-                
-                // Crear estilo de animación único
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes ${animationName} {
-                        0% {
-                            transform: translateY(0) rotate(0deg);
-                            opacity: 1;
-                        }
-                        100% {
-                            transform: translateY(100vh) rotate(${Math.random() * 720}deg);
-                            opacity: 0;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                confetti.style.animation = `${animationName} ${animationDuration}s linear forwards`;
                 document.body.appendChild(confetti);
                 
-                // Remover después de la animación
-                setTimeout(() => {
-                    if (confetti.parentNode) {
-                        confetti.parentNode.removeChild(confetti);
-                    }
-                }, animationDuration * 1000);
+                // Crear animación CSS
+                if (!document.querySelector('#confetti-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'confetti-style';
+                    style.textContent = `
+                        @keyframes fall {
+                            to {
+                                transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+                                opacity: 0;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                setTimeout(() => confetti.remove(), 3000);
             }
         }
 
