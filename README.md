@@ -1,4 +1,4 @@
-# 🧭 Busqueda del Tesoro AR
+# 🧭 Busqueda del Tesoro AR - GrupoA
 
 Este proyecto forma parte del laboratorio de la materia Tecnologías para Negocios Digitales, donde la misión es experimentar con la realidad aumentada creando una búsqueda del tesoro interactiva.  
 
